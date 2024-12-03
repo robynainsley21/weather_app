@@ -1,41 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather Wise</title>
-
-    <!-- Bootstrap Stylesheet -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- this is just a template. it can be changed -->
-    <div id="form_container" class="mt-5">
-      <h1 class="text-center">Weather Wise</h1>
-
-      <form action="/weather" method="POST">
-        <div class="form-group">
-          <label for="city">City:</label>
-          <input
-            type="text"
-            name="city"
-            id="city"
-            class="form-control"
-            placeholder="Enter a city"
-            required
-          />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #4CA1AF 0%, #2C3E50 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        .weather-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .weather-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        .current-weather {
+            text-align: center;
+            padding: 30px;
+        }
+        .forecast-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .forecast-day {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            padding: 15px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .forecast-day:last-child {
+            border-right: none;
+        }
+        .weather-icon {
+            width: 80px;
+            height: 80px;
+        }
+        .sea-data {
+            display: grid;
+            grid-template-columns: auto auto;
+            gap: 10px;
+            padding: 20px;
+        }
+        .sea-data p {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .search-container {
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        input[type="text"] {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+        }
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .btn-search {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        .btn-search:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-container">
+        <div class="search-container">
+            <form action="/weather" method="POST" class="d-flex gap-2">
+                <input
+                    type="text"
+                    name="city"
+                    class="form-control"
+                    placeholder="Enter a city"
+                    required
+                />
+                <button type="submit" class="btn btn-search">Search</button>
+            </form>
         </div>
-        <button type="submit" class="btn submit_btn">Get Weather</button>
-      </form>
-      {% if error %}
-      <div class="alert alert-danger mt-4">{{ error }}</div>
-      {% endif %}
+
+        <div class="weather-card current-weather">
+            <h2>SUNDAY</h2>
+            <p>SUNNY</p>
+            <img src="https://openweathermap.org/img/wn/01d@2x.png" alt="Weather Icon" class="weather-icon">
+            <h3>22°C | 71.6 °F</h3>
+            <p>14 KM/H SW</p>
+        </div>
+
+        <div class="weather-card">
+            <h3>SEA FORECAST REPORT</h3>
+            <div class="sea-data">
+                <p>WIND SPEED (KNOTS) <span>13</span></p>
+                <p>WIND GUSTS (KNOTS) <span>14</span></p>
+                <p>WIND DIRECTION <span>SW</span></p>
+                <p>WAVE (M) <span>2.2</span></p>
+                <p>WAVE PERIOD (S) <span>12</span></p>
+                <p>WAVE DIRECTION <span>SW</span></p>
+                <p>TEMPERATURE (°C) <span>23</span></p>
+                <p>CLOUD COVER (%) <span>0</span></p>
+            </div>
+        </div>
+
+        <div class="weather-card">
+            <div class="forecast-container">
+                <div class="forecast-day">
+                    <p>MONDAY</p>
+                    <img src="https://openweathermap.org/img/wn/02d@2x.png" alt="Partly Cloudy" class="weather-icon">
+                    <p>22°C</p>
+                    <p>71.6 °F</p>
+                </div>
+                <div class="forecast-day">
+                    <p>TUESDAY</p>
+                    <img src="https://openweathermap.org/img/wn/03d@2x.png" alt="Cloudy" class="weather-icon">
+                    <p>22°C</p>
+                    <p>71.6 °F</p>
+                </div>
+                <div class="forecast-day">
+                    <p>WEDNESDAY</p>
+                    <img src="https://openweathermap.org/img/wn/10d@2x.png" alt="Rain" class="weather-icon">
+                    <p>22°C</p>
+                    <p>71.6 °F</p>
+                </div>
+                <div class="forecast-day">
+                    <p>THURSDAY</p>
+                    <img src="https://openweathermap.org/img/wn/11d@2x.png" alt="Storm" class="weather-icon">
+                    <p>22°C</p>
+                    <p>71.6 °F</p>
+                </div>
+                <div class="forecast-day">
+                    <p>FRIDAY</p>
+                    <img src="https://openweathermap.org/img/wn/13d@2x.png" alt="Snow" class="weather-icon">
+                    <p>22°C</p>
+                    <p>71.6 °F</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+</body>
 </html>
