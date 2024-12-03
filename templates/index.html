@@ -78,11 +78,15 @@
                             // Save this data to prevent duplication
                             displayedData[key] = data;
 
-                            // Display weather information
                             const weatherInfo = `
+                                <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather Icon"/>
                                 <p>Location: ${data.name}</p>
                                 <p>Temperature: ${data.main.temp} °C</p>
                                 <p>Weather: ${data.weather[0].description}</p>
+                                <p>Wind Speed: ${data.wind.speed}</p>
+                                <p>Pressure: ${data.main.pressure}</p>
+                              
+
                             `;
                             document.querySelector(".container").insertAdjacentHTML("beforeend", weatherInfo);
                         })
@@ -130,11 +134,18 @@
 
                         displayedData[city] = data
 
-                        // Displaying weather information for the users city
+
+
+                  // Displaying weather information for the users city
                         const weatherInfo = `
                             <p>Location: ${data.name}</p>
-                            <p>Temperature: ${data.main.temp} °C</p>
+                             <p>Temperature: ${data.main.temp} °C</p>
                             <p>Weather: ${data.weather[0].description}</p>
+                            <p>Humidity: ${data.main.humidity}</p>
+                            <p>Wind Speed: ${data.wind.speed}</p>
+                            <p>Pressure: ${data.main.pressure}</p>
+                          
+                            
                         `;
                         document.querySelector(".container").insertAdjacentHTML("beforeend", weatherInfo);
                     })
