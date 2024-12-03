@@ -38,7 +38,7 @@
       {% endif %}
     </div>
     <script>
-    // Object to store already displayed weather data by coordinates
+    // storing already displayed weather data by coordinates
     let displayedData = {}; 
 
     // Function to fetch weather based on geolocation
@@ -83,7 +83,7 @@
          // Saving the data to prevent duplication
          displayedData[key] = data;
 
-        // Display weather information
+        // Displaying weather information
          const weatherInfo =  `
         <p>Location: ${data.name}</p>
         <p>Temperature: ${data.main.temp} °C</p>
@@ -106,7 +106,7 @@
                 }
             }
 
-            // Function to fetch weather based on city name
+            // fetching weather based on city name
             function fetchWeatherByCity(city) {
                 const status = document.querySelector("#status")
                 const mapLink = document.querySelector("#map-link")
