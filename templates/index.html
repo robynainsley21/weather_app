@@ -1,41 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather Wise</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather-Forecast-App</title>
+    
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Weatherwise Hackathon</h1>
 
-    <!-- Bootstrap Stylesheet -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- this is just a template. it can be changed -->
-    <div id="form_container" class="mt-5">
-      <h1 class="text-center">Weather Wise</h1>
+        <!-- Search Feild -->
+      
+        <form action="/weather" method="POST">
+            <div class="form-group">
+              <label for="city">City:</label>
+              <input
+                type="text"
+                name="city"
+                id="city"
+                class="form-control"
+                placeholder="Enter a city"
+                required
+              />
+            </div>
 
-      <form action="/weather" method="POST">
-        <div class="form-group">
-          <label for="city">City:</label>
-          <input
-            type="text"
-            name="city"
-            id="city"
-            class="form-control"
-            placeholder="Enter a city"
-            required
-          />
-        </div>
-        <button type="submit" class="btn submit_btn">Get Weather</button>
-      </form>
-      {% if error %}
-      <div class="alert alert-danger mt-4">{{ error }}</div>
-      {% endif %}
+        <!-- Display Location Weather Information -->
+        <p id="status"></p>
+        <a id="map-link" target="_blank"></a>
+
+        {% if error %}
+        <div class="alert alert-danger mt-4">{{ error }}</div>
+        {% endif %}
+
+        <script>
+            let displayedData = {}; // Object to store already displayed weather data by coordinates
+
+            // Function to fetch weather based on geolocation
+            function geoFindMe() {
+                const status = document.querySelector("#status");
+                const mapLink = document.querySelector("#map-link");
+
+                mapLink.href = "";
+                mapLink.textContent = "";
+
+                function success(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Check if the weather data for this location has already been fetched
+                    const key = `${latitude},${longitude}`;
+                    if (displayedData[key]) {
+                        status.textContent = "Weather data already shown for this location.";
+                        return; // Skip fetching new data if it's already displayed
+                    }
+
+                    // Otherwise, proceed with fetching the weather data
+                    status.textContent = "";
+                    mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+                    mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+
+                    // Call OpenWeather API
+                    const apiKey = "0a05aaca142eafd2174374fa14f28035"; 
+                    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+
+                    fetch(url)
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Weather data retrieval failed");
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            // Save this data to prevent duplication
+                            displayedData[key] = data;
+
+                            const weatherInfo = `
+                                <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather Icon"/>
+                                <p>Location: ${data.name}</p>
+                                <p>Temperature: ${data.main.temp} °C</p>
+                                <p>Weather: ${data.weather[0].description}</p>
+                                <p>Wind Speed: ${data.wind.speed}</p>
+                                <p>Pressure: ${data.main.pressure}</p>
+                              
+
+                            `;
+                            document.querySelector(".container").insertAdjacentHTML("beforeend", weatherInfo);
+                        })
+                        .catch((error) => {
+                            status.textContent = "Error retrieving weather data: " + error.message;
+                        });
+                }
+
+                function error() {
+                    status.textContent = "Unable to retrieve your location";
+                }
+
+                if (!navigator.geolocation) {
+                    status.textContent = "Geolocation is not supported by your browser";
+                } else {
+                    status.textContent = "Locating…";
+                    navigator.geolocation.getCurrentPosition(success, error);
+                }
+            }
+
+            // Function to fetch weather based on city name
+            function fetchWeatherByCity(city) {
+                const status = document.querySelector("#status")
+                const mapLink = document.querySelector("#map-link")
+
+                mapLink.href = ""
+                mapLink.textContent = ""
+
+                const apiKey = "0a05aaca142eafd2174374fa14f28035"; 
+                const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+                fetch(url)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Weather data retrieval failed")
+                        }
+                        return response.json()
+                    })
+                    .then((data) => {
+                        // Saving the  data to prevent duplication (checking by city name)
+                        if (displayedData[city]) {
+                            status.textContent = "Weather data already shown for this city."
+                            return;
+                        }
+
+                        displayedData[city] = data
+
+
+
+                  // Displaying weather information for the users city
+                        const weatherInfo = `
+                            <p>Location: ${data.name}</p>
+                             <p>Temperature: ${data.main.temp} °C</p>
+                            <p>Weather: ${data.weather[0].description}</p>
+                            <p>Humidity: ${data.main.humidity}</p>
+                            <p>Wind Speed: ${data.wind.speed}</p>
+                            <p>Pressure: ${data.main.pressure}</p>
+                          
+                            
+                        `;
+                        document.querySelector(".container").insertAdjacentHTML("beforeend", weatherInfo);
+                    })
+                    .catch((error) => {
+                        status.textContent = "Error retrieving weather data: " + error.message;
+                    });
+            }
+
+            
+
+            // Automatically trigger geoFindMe function when the page loads
+            window.onload = geoFindMe;
+        </script>
+
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+</body>
 </html>
