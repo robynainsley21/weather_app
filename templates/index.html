@@ -5,17 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather Wise</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
     <style>
-        body {
-            background: linear-gradient(135deg, #4CA1AF 0%, #2C3E50 100%);
-            min-height: 100vh;
-            color: white;
-            padding: 20px;
-        }
-        .weather-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+body {
+    background: linear-gradient(135deg, #4CA1AF 0%, #2C3E50 100%);
+    min-height: 100vh;
+    color: white;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.lead{
+  padding: 0;
+  max-width: 100vw;
+}
+
+.weather-container {
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+        .weather-card {
+    flex-grow: 1;
+}
         .weather-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -34,30 +51,47 @@
             gap: 10px;
         }
         .forecast-day {
-            flex: 1;
-            min-width: 120px;
-            text-align: center;
-            padding: 15px;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-        }
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
         .forecast-day:last-child {
-            border-right: none;
+          border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
         .weather-icon {
             width: 80px;
             height: 80px;
         }
-        .sea-data {
-            display: grid;
-            grid-template-columns: auto auto;
-            gap: 10px;
-            padding: 20px;
-        }
-        .sea-data p {
-            margin: 5px 0;
-            display: flex;
-            justify-content: space-between;
-        }
+        .air-quality {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px;
+    padding: 20px;
+}
+.air-quality p {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.air-quality p span {
+    font-weight: 500;
+}
+@media (min-width: 768px) {
+    .air-quality {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
         .search-container {
             max-width: 500px;
             margin: 20px auto;
@@ -83,81 +117,399 @@
         .btn-search:hover {
             background: rgba(255, 255, 255, 0.3);
         }
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .weather-detail-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            border: 0.25em solid transparent;
+            border-top-color: #007bff;
+            animation: spin 1s linear infinite, colorChange 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes colorChange {
+            0% {
+                border-top-color: #007bff;
+            }
+            12.5% {
+                border-top-color: #6c757d;
+            }
+            25% {
+                border-top-color: #28a745;
+            }
+            37.5% {
+                border-top-color: #dc3545;
+            }
+            50% {
+                border-top-color: #ffc107;
+            }
+            62.5% {
+                border-top-color: #17a2b8;
+            }
+            75% {
+                border-top-color: #f8f9fa;
+            }
+            87.5% {
+                border-top-color: #343a40;
+            }
+            100% {
+                border-top-color: #007bff;
+            }
+        }
+
+        @media (max-width: 300px) {
+            .spinner-border {
+                width: 2rem;
+                height: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .spinner-border {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+    .footer-container {
+    width: 100%;
+    padding: 15px 0;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    position: relative;
+    margin-top: auto;
+    box-sizing: border-box;
+}
+
+
+.footer-container p {
+  margin: 0;
+}
+
+.shadow {
+  display: inline-block;
+  margin-left: 5px;
+  background: none !important;
+  background-color: none !important;
+  box-shadow: 0 0 0 rgba(255, 255, 255, 0) !important;
+}
+
+.weather-container {
+    margin-bottom: 50px;
+}
+
+.swal2-popup {
+    background: linear-gradient(135deg, #4CA1AF 0%, #2C3E50 100%);
+    border-radius: 15px;
+    color: white;
+}
+
+.swal2-title {
+    color: white !important;
+}
+
+.swal2-text {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.swal2-icon.swal2-error {
+    border-color: #dc3545;
+}
+
+.swal2-icon.swal2-warning {
+    border-color: #ffc107;
+    color: #ffc107;
+}
+
+.swal2-icon.swal2-success {
+    border-color: #28a745;
+}
+
+.swal2-icon.swal2-info {
+    border-color: #17a2b8;
+}
+
+.swal2-confirm.swal2-styled {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border-radius: 25px !important;
+    padding: 10px 25px;
+    transition: all 0.3s;
+}
+
+.swal2-confirm.swal2-styled:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-1px);
+}
+
+.swal2-cancel.swal2-styled {
+    background: rgba(220, 53, 69, 0.2) !important;
+    color: white !important;
+    border-radius: 25px !important;
+}
+
+.swal2-cancel.swal2-styled:hover {
+    background: rgba(220, 53, 69, 0.3) !important;
+}
+
+.swal2-backdrop-show {
+    background: rgba(0, 0, 0, 0.6) !important;
+}
+
+.curve-left{
+  border-radius: 30px 0 0 30px !important;
+}
+.curve-right{
+  border-radius: 0 30px 30px 0 !important;
+}
+
+::-webkit-scrollbar{
+  display: none;
+}
+
     </style>
 </head>
 <body>
-    <div class="weather-container">
-        <div class="search-container">
-            <form action="/weather" method="POST" class="d-flex gap-2">
-                <input
-                    type="text"
-                    name="city"
-                    class="form-control"
-                    placeholder="Enter a city"
-                    required
-                />
-                <button type="submit" class="btn btn-search">Search</button>
-            </form>
-        </div>
+  <div class="spinner-overlay">
+    <div class="spinner-border" role="status"></div>
+</div>
+    <div class="search-container">
+    <div class="d-flex px-2">
+        <input
+            type="text"
+            id="cityInput"
+            class="form-control curve-left"
+            placeholder="Enter city (e.g., Cape Town, ZA)"
+            required
+        />
+        <button onclick="searchWeather()" class="btn btn-search curve-right">Search</button>
+    </div>
+    <small class="text-white-50 mt-1 d-block px-2">For more accurate results, include the country code (e.g., London, GB)</small>
+</div>
 
         <div class="weather-card current-weather">
-            <h2>SUNDAY</h2>
-            <p>SUNNY</p>
-            <img src="https://openweathermap.org/img/wn/01d@2x.png" alt="Weather Icon" class="weather-icon">
-            <h3>22°C | 71.6 °F</h3>
-            <p>14 KM/H SW</p>
-        </div>
-
-        <div class="weather-card">
-            <h3>SEA FORECAST REPORT</h3>
-            <div class="sea-data">
-                <p>WIND SPEED (KNOTS) <span>13</span></p>
-                <p>WIND GUSTS (KNOTS) <span>14</span></p>
-                <p>WIND DIRECTION <span>SW</span></p>
-                <p>WAVE (M) <span>2.2</span></p>
-                <p>WAVE PERIOD (S) <span>12</span></p>
-                <p>WAVE DIRECTION <span>SW</span></p>
-                <p>TEMPERATURE (°C) <span>23</span></p>
-                <p>CLOUD COVER (%) <span>0</span></p>
+            <h2 id="locationName">Loading...</h2>
+            <h3 id="currentDay">Please search for a location</h3>
+            <p id="currentDesc" class="text-capitalize"></p>
+            <img id="currentIcon" src="" alt="Weather Icon" class="weather-icon">
+            <h3 id="currentTemp">--°C</h3>
+            
+            <div class="weather-details">
+                <div class="weather-detail-item">
+                    <small>Feels Like</small>
+                    <h5 id="feelsLike">--°C</h5>
+                </div>
+                <div class="weather-detail-item">
+                    <small>Min/Max</small>
+                    <h5><span id="tempMin">--</span>°C / <span id="tempMax">--</span>°C</h5>
+                </div>
+                <div class="weather-detail-item">
+                    <small>Wind</small>
+                    <h5 id="currentWind">-- km/h</h5>
+                </div>
+                <div class="weather-detail-item">
+                    <small>Humidity</small>
+                    <h5 id="humidity">--%</h5>
+                </div>
             </div>
         </div>
 
         <div class="weather-card">
-            <div class="forecast-container">
-                <div class="forecast-day">
-                    <p>MONDAY</p>
-                    <img src="https://openweathermap.org/img/wn/02d@2x.png" alt="Partly Cloudy" class="weather-icon">
-                    <p>22°C</p>
-                    <p>71.6 °F</p>
-                </div>
-                <div class="forecast-day">
-                    <p>TUESDAY</p>
-                    <img src="https://openweathermap.org/img/wn/03d@2x.png" alt="Cloudy" class="weather-icon">
-                    <p>22°C</p>
-                    <p>71.6 °F</p>
-                </div>
-                <div class="forecast-day">
-                    <p>WEDNESDAY</p>
-                    <img src="https://openweathermap.org/img/wn/10d@2x.png" alt="Rain" class="weather-icon">
-                    <p>22°C</p>
-                    <p>71.6 °F</p>
-                </div>
-                <div class="forecast-day">
-                    <p>THURSDAY</p>
-                    <img src="https://openweathermap.org/img/wn/11d@2x.png" alt="Storm" class="weather-icon">
-                    <p>22°C</p>
-                    <p>71.6 °F</p>
-                </div>
-                <div class="forecast-day">
-                    <p>FRIDAY</p>
-                    <img src="https://openweathermap.org/img/wn/13d@2x.png" alt="Snow" class="weather-icon">
-                    <p>22°C</p>
-                    <p>71.6 °F</p>
-                </div>
+          <h3>AIR QUALITY REPORT - <span id="aqiDesc" class="text-capitalize">--</span></h3>
+          <div class="air-quality">
+              <p>AIR QUALITY INDEX: <span id="aqi">--</span></p>
+              <p>CO (μg/m³): <span id="co">--</span></p>
+              <p>NO₂ (μg/m³): <span id="no2">--</span></p>
+              <p>O₃ (μg/m³): <span id="o3">--</span></p>
+              <p>PM2.5 (μg/m³): <span id="pm2_5">--</span></p>
+              <p>PM10 (μg/m³): <span id="pm10">--</span></p>
+              <p>SO₂ (μg/m³): <span id="so2">--</span></p>
+              <p>NH₃ (μg/m³): <span id="nh3">--</span></p>
+          </div>
+      </div>
+
+        <div class="weather-card">
+            <h3>5-DAY FORECAST</h3>
+            <div class="forecast-container" id="forecast">
             </div>
         </div>
     </div>
 
+    <footer class="footer-container">
+      <p class="lead">&copy;Copyright | WeatherWise<span class="shadow" id="currentYear"></span></p>
+      <!-- <div class="row">
+      </div> -->
+  </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getUTCFullYear();
+        
+        function showSpinner() {
+            document.querySelector('.spinner-overlay').style.display = 'flex';
+        }
+
+        function hideSpinner() {
+            document.querySelector('.spinner-overlay').style.display = 'none';
+        }
+
+        window.addEventListener('load', () => {
+            if (navigator.geolocation) {
+                showSpinner();
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        getWeatherData({
+                            lat: position.coords.latitude,
+                            lon: position.coords.longitude
+                        });
+                    },
+                    (error) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Location Error',
+                            text: 'Unable to get your current location. Please search for a city manually.',
+                        });
+                        hideSpinner();
+                    }
+                );
+            }
+        });
+
+        function searchWeather() {
+            const city = document.getElementById('cityInput').value;
+            if (city) {
+                showSpinner();
+                getWeatherData({ location: city });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Input Required',
+                    text: 'Please enter a city name',
+                });
+            }
+        }
+
+        function getWeatherData(params) {
+            showSpinner();
+            fetch('/get_weather', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(params)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error,
+                    });
+                    return;
+                }
+                updateUI(data);
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error fetching weather data. Please try again.',
+                });
+            })
+            .finally(() => {
+                hideSpinner();
+            });
+        }
+
+        function updateUI(data) {
+            document.getElementById('locationName').textContent = `${data.current.city}, ${data.current.country}`;
+            document.getElementById('currentDay').textContent = data.current.day;
+            document.getElementById('currentDesc').textContent = data.current.description;
+            document.getElementById('currentIcon').src = `https://openweathermap.org/img/wn/${data.current.icon}@2x.png`;
+            document.getElementById('currentTemp').textContent = `${Math.round(data.current.temp)}°C`;
+            document.getElementById('feelsLike').textContent = `${Math.round(data.current.feels_like)}°C`;
+            document.getElementById('tempMin').textContent = Math.round(data.current.temp_min);
+            document.getElementById('tempMax').textContent = Math.round(data.current.temp_max);
+            document.getElementById('currentWind').textContent = `${data.current.wind_speed} km/h`;
+            document.getElementById('humidity').textContent = `${data.current.humidity}%`;
+
+            const aqiDescriptions = {
+                1: 'Good',
+                2: 'Fair',
+                3: 'Moderate',
+                4: 'Poor',
+                5: 'Very Poor'
+            };
+            
+            document.getElementById('aqiDesc').textContent = aqiDescriptions[data.pollution.aqi] || '--';
+            document.getElementById('aqi').textContent = data.pollution.aqi;
+            
+            const components = data.pollution.components;
+            for (const [key, value] of Object.entries(components)) {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = value.toFixed(2);
+                }
+            }
+
+            const forecastContainer = document.getElementById('forecast');
+            forecastContainer.innerHTML = '';
+
+            data.forecast.forEach((forecast) => {
+                const forecastDay = document.createElement('div');
+                forecastDay.className = 'forecast-day';
+                forecastDay.innerHTML = `
+                    <p>${forecast.day}</p>
+                    <img src="https://openweathermap.org/img/wn/${forecast.icon}@2x.png" 
+                         alt="${forecast.description}" 
+                         class="weather-icon">
+                    <p>Min: ${Math.round(forecast.temp_min)}°C</p>
+                    <p>Max: ${Math.round(forecast.temp_max)}°C</p>
+                `;
+                forecastContainer.appendChild(forecastDay);
+            });
+        }
+
+        document.getElementById('cityInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchWeather();
+            }
+        });
+    </script>
 </body>
 </html>
