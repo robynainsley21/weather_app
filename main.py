@@ -1,32 +1,20 @@
-
 from flask import Flask, render_template, request, jsonify
-from dotenv import load_dotenv
-import os
 import requests
 from datetime import datetime
-load_dotenv()
-
-API_KEY = os.getenv('API_KEY')
-
 app = Flask(__name__)
-
-
+API_KEY = "0a05aaca142eafd2174374fa14f28035"
 def get_weather_data(lat, lon):
     current_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
     current_response = requests.get(current_url).json()
-    
     forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
     forecast_response = requests.get(forecast_url).json()
-    
     pollution_url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={API_KEY}"
     pollution_response = requests.get(pollution_url).json()
-    
     daily_forecasts = {}
     for item in forecast_response['list']:
         day = datetime.fromtimestamp(item['dt']).strftime('%A')
         temp_min = item['main']['temp_min']
         temp_max = item['main']['temp_max']
-
         if day not in daily_forecasts:
             daily_forecasts[day] = {
                 'temp_min': temp_min,
@@ -37,7 +25,6 @@ def get_weather_data(lat, lon):
         else:
             daily_forecasts[day]['temp_min'] = min(daily_forecasts[day]['temp_min'], temp_min)
             daily_forecasts[day]['temp_max'] = max(daily_forecasts[day]['temp_max'], temp_max)
-
     forecast = []
     for day, data in list(daily_forecasts.items())[:5]:
         forecast.append({
@@ -47,7 +34,6 @@ def get_weather_data(lat, lon):
             'description': data['description'],
             'icon': data['icon']
         })
-
     weather_data = {
         'current': {
             'temp': current_response['main']['temp'],
@@ -68,43 +54,46 @@ def get_weather_data(lat, lon):
             'components': pollution_response['list'][0]['components']
         }
     }
-    
     return weather_data
-
 @app.route('/')
 def index():
     return render_template('index.html')
-
 @app.route('/get_weather', methods=['POST'])
 def get_weather():
     data = request.get_json()
     location = data.get('location', '')
     lat = data.get('lat')
     lon = data.get('lon')
-    
     if not (lat and lon):
         location_parts = [part.strip() for part in location.split(',')]
         city = location_parts[0]
         country_code = location_parts[1] if len(location_parts) > 1 else ''
-        
         if country_code:
             geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city},{country_code}&limit=1&appid={API_KEY}"
         else:
             geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={API_KEY}"
-            
         geo_response = requests.get(geo_url).json()
-        
         if not geo_response:
             return jsonify({'error': 'Location not found'})
-        
         lat = geo_response[0]['lat']
         lon = geo_response[0]['lon']
-    
     try:
         weather_data = get_weather_data(lat, lon)
         return jsonify(weather_data)
     except Exception as e:
         return jsonify({'error': str(e)})
-
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
