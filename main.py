@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request, jsonify
+from dotenv import load_dotenv
+import os
 import requests
 from datetime import datetime
+load_dotenv()
+
+API_KEY = os.getenv('API_KEY')
 
 app = Flask(__name__)
 
-API_KEY = "0a05aaca142eafd2174374fa14f28035"
 
 def get_weather_data(lat, lon):
     current_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
